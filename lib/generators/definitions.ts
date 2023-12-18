@@ -42,7 +42,7 @@ const GetType = (
 	if (value.type === 'object' && value.properties) {
 		const jsonPropertyObject: {[key: string]: unknown} = {};
 		Object.keys(value.properties).forEach(propKey => {
-			const propVal = value.properties[propKey];
+			const propVal = value.properties![propKey];
 			if (propVal.enum) {
 				CreateEnumFromDefinition(file, `${name}${propKey}`, propVal);
 			}
@@ -51,6 +51,10 @@ const GetType = (
 		});
 
 		return JSON.stringify(jsonPropertyObject, null).replace(/["']/g, '');
+	}
+
+	if (value['$ref']) {
+		return value['$ref'].replace(/#\/definitions\//, '');
 	}
 
 	return GetPrimitiveTypeFromOpenAPIType(value.type);
@@ -138,9 +142,16 @@ const CreateTypeFromDefinition = <T extends OpenAPIType>(
 		properties: [],
 	});
 
-	if (definition.properties) {
-		Object.keys(definition.properties).forEach(key => {
-			const value = definition.properties[key]; // TODO x-nullable
+	let properties = definition.properties;
+	if (definition.allOf) {
+		properties = definition.allOf[1].properties;
+	} else if (definition.additionalProperties) {
+		properties = definition.additionalProperties;
+	}
+
+	if (properties) {
+		Object.keys(properties).forEach(key => {
+			const value = properties![key]; // TODO x-nullable
 			key = key.replace(/[.-]/g, '_');
 
 			if (value.enum) {

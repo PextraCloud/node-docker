@@ -27,7 +27,15 @@ export interface OpenAPIBaseDefinition<T extends OpenAPIType> {
 	items?: OpenAPIBaseDefinition<OpenAPIType>;
 	x_nullable?: boolean;
 	example?: T;
-	properties: {
+	properties?: {
+		[key: string]: OpenAPIDefinitionProperty<T>;
+	};
+	allOf?: Array<{
+		properties: {
+			[key: string]: OpenAPIDefinitionProperty<T>;
+		};
+	}>;
+	additionalProperties?: {
 		[key: string]: OpenAPIDefinitionProperty<T>;
 	};
 }
@@ -37,6 +45,7 @@ export interface OpenAPIDefinitionProperty<T extends OpenAPIType>
 	format?: string;
 	minimum?: number; // todo
 	maximum?: number;
+	$ref?: string;
 }
 
 export type OpenAPIDefinition<T extends OpenAPIType> = OpenAPIBaseDefinition<T>;
