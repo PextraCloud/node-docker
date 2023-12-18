@@ -25,8 +25,8 @@ export type OpenAPIPathParameter<
 	U extends OpenAPIParameterType,
 > = {
 	name: string;
-	type: U;
-	in: T;
+	type: T;
+	in: U;
 	description: string;
 	required: boolean;
 };
@@ -47,7 +47,7 @@ export type OpenAPIPathOperation = {
 	description: string;
 	operationId: string;
 	produces: Array<string>; // MIME type
-	parameters: Array<OpenAPIPathParameter<OpenAPIType, OpenAPIParameterType>>;
+	parameters?: Array<OpenAPIPathParameter<OpenAPIType, OpenAPIParameterType>>;
 	responses: {
 		[key: string]: OpenAPIPathResponse;
 	};
